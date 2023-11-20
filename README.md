@@ -1,5 +1,5 @@
-# Octave Arduino Multiplot
-Octave_Arduino_Multiplot is an Octave Script that receives data from the the serial interface of a computer and processes and visualizes these data. The data are usually provided by an Arduino microcontroller - hence the name of the project.
+# SerialPortDataStreamer
+SerialPortDataStreamer is an Octave Script that receives data from the the serial interface of a computer and processes and visualizes these data. The data are usually provided by an Arduino microcontroller.
 
 ### Definition of datasets and their elements
 The data is transmitted as plain ASCII text (strings), which makes it easy readable with a monitor programs. The current transmission speed is 115.200 baud (but can be changed).<br>
@@ -11,11 +11,11 @@ Each **element** of a **dataset** is a **name-value pair** (https://en.wikipedia
 
 e.g. "EKG:234"
 
-Different elements of a dataset are seperated by a comma: 
+This element is associated with a timeinfo seperated by a commma. This name-value-pair represents the time intveral since the last element: 
 
 "EKG:234,t:5"
 
-As mentioned a dataset is terminated by CR\LF (or \r\n):  
+As mentioned a dataset is terminated by CR\LF (or \r\n): 
 
 "EKG:234,t:5\r\nEKG:345,t:6\r\nEKG:987,t:7\r\n"
 
@@ -29,4 +29,3 @@ EKG:987,t:7<br>
 The Octave script splits the incoming **datasets** into **data-streams** of the different names:
 
 dataStream(1): name="EKG" value stream = 234,345,987, ...<br>
-dataStream(2): name= "t"  value stream = 5,6,7, ...<br>
