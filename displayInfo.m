@@ -1,5 +1,5 @@
 function displayInfo(fi_1)
-  clc  
+  #clc
   disp("Computer");
   disp("======== ");
   disp(uname().sysname)
@@ -38,13 +38,13 @@ function displayInfo(fi_1)
   disp(strcat("Renderer-Mode:",get(fi_1,"renderermode")))
   disp("")
 
-  disp("Available COM-Ports");
-  disp("===================");
-  ports = serialportlist();
-  if (length(ports) > 0)
-     for i = 1:length(ports)
-       disp(ports{i})
-     endfor
-  endif
+##  disp("Available COM-Ports");
+##  disp("===================");
+##  ports = serialportlist();
+##  if (length(ports) > 0)
+##     for i = 1:length(ports)
+##       disp(ports{i})
+##     endfor
+##  endif
   disp(" ")
 endfunction

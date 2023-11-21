@@ -6,6 +6,7 @@
 
 pkg load instrument-control;
 clear all;
+
 # obj = dataStreamClass(name,plcolor,dt,plotwidth,plot,filter)
 # createFilter(f_abtast,f_HP,f_NO,f_TP)
 #dataStream(2).length = 3000;
@@ -23,8 +24,11 @@ dataStream(1).evalWindow    = 200;          # alle 1 sec Threshold neu bestimmen
 ##dataStream(2).createFilter(50,1,10,20);
 ##dataStream(2).slopeDetector = 1;
 
-streamSelector = createDictionary(dataStream);  # externe Funktion
-regex_pattern = createRegEx(dataStream);        # externe Funktion
+baudrate = 115200;
+inputPort = serialPortClass(baudrate);                     # externe Klasse
+
+inputPort.streamSelector = createDictionary(dataStream);   # externe Funktion
+inputPort.regex_pattern  = createRegEx(dataStream);        # externe Funktion
 
 # Globale Variablen zur Programmsteuerung
 global HP_filtered = 1 NO_filtered = 1 TP_filtered = 1 DQ_filtered = 0 DQ2_filtered = 0;
@@ -35,41 +39,14 @@ Plot_Time = 0.1;
 SerialPort_Time = 0.1;
 Pause_Time = 0.05;
 
-# Suche nach passendem seriellen Port
-baudrate = 115200;
-disp('Searching Serial Port ... ')
-serialPortPath = checkSerialPorts(baudrate)
-
 # Der weitere Teil wird nur ausgefuehrt, wenn serielle Schnittstelle gefunden wurde
-if !isempty(serialPortPath)
-  disp('Device found:');
-  disp(serialPortPath);
+if !isempty(inputPort.serialPortPath)
 
   # Graphikfenster initialisieren
   plotGraph = plotGraphClass(dataStream);       # externe Klasse
   cap = GUI_Elements(plotGraph.fi_1);           # externe Funktion
   displayInfo(plotGraph.fi_1);                  # externe Funktion
-
-  # Oeffnen serialPort
-  disp('Open SerialPort!')
-  serial_01 = serialport(serialPortPath,baudrate);
-  flush(serial_01);
-  pause(2)
-  drawnow();
-  disp('Waiting for data!')
-  # Sicherstellen, dass inBuffer nach einem CR/LF (Zeilenanfang) beginnt
-  inSerialPort = ''; inBuffer = ''; posLF = 0;
-  do
-     bytesAvailable = serial_01.NumBytesAvailable;
-     if (bytesAvailable > 0)
-       ## Daten werden vom SerialPort gelesen
-       inSerialPort = [inSerialPort char(read(serial_01,bytesAvailable))];
-       posLF        = index(inSerialPort,char(10),"last");
-     endif
-  until (posLF > 0);
-  # erst ab dem letzten \n geht es los
-  inBuffer = inSerialPort(posLF+1:end);
-  disp('Receiving data!')
+  inputPort.clearPort();                        # externe Klasse
 
   # Hauptschleife
   # =============
@@ -78,6 +55,7 @@ if !isempty(serialPortPath)
 
   bench_tic = tic(); plot_tic = tic(); serial_tic = tic();
   [t_cpu_prev,t_user_prev,t_sys_prev] = cputime();
+
   do
     # Button checken
     # ===============
@@ -114,34 +92,13 @@ if !isempty(serialPortPath)
     # ===================
     s_toc = toc(serial_tic);
     if (s_toc > SerialPort_Time)
-      bytesAvailable = serial_01.NumBytesAvailable;
-      if (bytesAvailable > 0)
-        bytesReceived = bytesReceived + bytesAvailable;
-        inSerialPort = char(read(serial_01,bytesAvailable));
-
-        inBuffer     = [inBuffer inSerialPort];
-        posLF        = index(inBuffer,char(10),"last");
-        if (posLF > 0)
-          inChar   = inBuffer(1:posLF);
-          inBuffer = inBuffer(posLF+1:end);
-
-          if (rec_data)   # Wird vom REC-Button gesteuert
-            matches = regexp(inChar, regex_pattern, 'tokens'); # Regular Expression auswerten
-            countMatches   = length(matches);                  # Wert wird ausgegeben
-
-            datasetCounter = datasetCounter + countMatches;         # datasetCounter laeuft durch
-            datasetCounter_tic = datasetCounter_tic + countMatches; # datasetCounter_tic >> Bench_Time
-
-            for i = 1:countMatches
-              streamName = matches{i}{1};
-              adc        = str2num(matches{i}{2});
-              sample_t   = str2num(matches{i}{3});
-              j = streamSelector(streamName);        # Sample einem dataStream zuweisen
-              dataStream(j).addSample(adc,sample_t); # Hier uebernimmt dataStream die Arbeit
-            endfor
-          endif # (rec_data)
-        endif # of posCRLF
-      endif  # of bytesAvaiable
+      [bytesAvailable,inChar] = inputPort.readPort();  # >> inputPort.inBuffer;
+      bytesReceived = bytesReceived + bytesAvailable;
+      if (rec_data)   # Wird vom REC-Button gesteuert
+        countMatches = inputPort.parseInput(inChar,dataStream);
+        datasetCounter = datasetCounter + countMatches;         # datasetCounter laeuft durch
+        datasetCounter_tic = datasetCounter_tic + countMatches; # datasetCounter_tic >> Bench_Time
+      endif
       serial_tic = tic();
     endif # s_toc
 
@@ -158,6 +115,7 @@ if !isempty(serialPortPath)
     endif # p_toc
     # Entlastung der CPU
     pause(Pause_Time);
+
     # Benchmarking
     # ============
     b_toc = toc(bench_tic);
@@ -181,5 +139,6 @@ if !isempty(serialPortPath)
       bench_tic=tic();                   # neue Zeitschleife
     endif # b_toc
   until(quit_prg);    %% Programmende mit Quit-Button
-  clear serial_01;
+  clear inputPort.serial_01;
+  clear all;
 endif

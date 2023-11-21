@@ -10,6 +10,7 @@ classdef plotGraphClass < handle
     function self = plotGraphClass(dataStream)    # Constructor
       graphics_toolkit("qt");
       self.fi_1 = figure(1);
+      #set(self.fi_1,"position",[0,0,1000,1000]);
       clf
       spN = 0;
       for i = 1:length(dataStream);
