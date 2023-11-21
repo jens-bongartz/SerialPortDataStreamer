@@ -14,7 +14,6 @@ function displayInfo(fi_1)
   disp(ver_struct(1).Version)
   %disp(ver_struct(1).Release)
   disp(ver_struct(1).Date)
-  disp(" ")
   disp("instrument-control");
   disp("==================");
   for i = 2:length(ver_struct)
@@ -24,10 +23,8 @@ function displayInfo(fi_1)
       disp(ver_struct(i).Date)
     endif
   endfor
-  disp(" ")
   % Graphics
   % ========
-  disp("")
   disp("Graphics Properties")
   disp("===================");
   disp(strcat("gl_renderer  :",get(fi_1,"__gl_renderer__")))
@@ -36,7 +33,7 @@ function displayInfo(fi_1)
   disp(strcat("Toolkit      :",get(fi_1,"__graphics_toolkit__")))
   disp(strcat("Renderer     :",get(fi_1,"renderer")))
   disp(strcat("Renderer-Mode:",get(fi_1,"renderermode")))
-  disp("")
+
 
 ##  disp("Available COM-Ports");
 ##  disp("===================");
@@ -46,5 +43,5 @@ function displayInfo(fi_1)
 ##       disp(ports{i})
 ##     endfor
 ##  endif
-  disp(" ")
+##  disp(" ")
 endfunction

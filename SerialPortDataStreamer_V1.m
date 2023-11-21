@@ -3,15 +3,10 @@
 #  (c) Jens Bongartz, 2023, RheinAhrCampus Remagen
 #                Stand: 19.11.2023
 #  ================================================
-
 pkg load instrument-control;
-clear all;
-
+clear all; clc;
 # obj = dataStreamClass(name,plcolor,dt,plotwidth,plot,filter)
 # createFilter(f_abtast,f_HP,f_NO,f_TP)
-#dataStream(2).length = 3000;
-##dataStream(1).peakDetector  = 1;
-##dataStream(1).evalWindow = 500;
 dataStream(1) = dataStreamClass("EKG","red",5,800,1,1); # externe Klasse
 dataStream(1).createFilter(200,1,50,40);
 dataStream(1).peakDetector  = 1;
@@ -26,7 +21,6 @@ dataStream(1).evalWindow    = 200;          # alle 1 sec Threshold neu bestimmen
 
 baudrate = 115200;
 inputPort = serialPortClass(baudrate);                     # externe Klasse
-
 inputPort.streamSelector = createDictionary(dataStream);   # externe Funktion
 inputPort.regex_pattern  = createRegEx(dataStream);        # externe Funktion
 

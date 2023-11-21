@@ -31,14 +31,11 @@ classdef serialPortClass < handle
     endfunction
 
     function clearPort(self)
-      flush(self.serial_01);
+      #flush(self.serial_01);
       posLF = 0;
       do
         bytesAvailable = self.serial_01.NumBytesAvailable;
         if (bytesAvailable > 0)
-          #disp("Bytes availabe:");
-          #disp(bytesAvailable);
-          ## Daten werden vom SerialPort gelesen
           inSerialPort = char(read(self.serial_01,bytesAvailable));
           posLF        = index(inSerialPort,char(10),"last");
         endif
@@ -74,7 +71,12 @@ classdef serialPortClass < handle
             lastCRLF     = index(inSerialPort, "\r\n","last");
             if (lastCRLF > firstCRLF)
               inChar   = inSerialPort(firstCRLF:lastCRLF);
-              values   = strsplit(inChar, {':',',','\n','\r'});
+              try
+                 values   = strsplit(inChar, {':',',','\n','\r'});
+              catch
+                 disp(lasterror.message);
+                 values = {};
+              end_try_catch
               data = unique(values);
               filtered_data = {};
               for i = 1:numel(data)
