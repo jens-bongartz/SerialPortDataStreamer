@@ -23,9 +23,10 @@ CR\LF (or \r\n) is not visible but printed as a new line. It looks like this in 
 
 EKG:234,t:5<br>
 EKG:345,t:6<br>
-EKG:987,t:7<br>
+EKG:987,t:5<br>
 
 ### Transform datasets into data-streams
 The Octave script splits the incoming **datasets** into **data-streams** of the different names:
 
-dataStream(1): name="EKG" value stream = 234,345,987, ...<br>
+dataStream(1): name="EKG" value stream: array = 234,345,987, ...<br>
+
