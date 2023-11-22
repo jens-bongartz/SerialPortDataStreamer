@@ -11,7 +11,7 @@ Each **element** of a **dataset** is a **name-value pair** (https://en.wikipedia
 
 e.g. "EKG:234"
 
-This element is associated with a timeinfo seperated by a commma. This name-value-pair represents the time intveral since the last element: 
+This element is associated with a timeinfo seperated by a commma. This name-value-pair represents the time interveral since the last element: 
 
 "EKG:234,t:5"
 
