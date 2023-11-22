@@ -3,40 +3,23 @@ classdef dataStreamClass < handle
 
     properties
         name      = "";
-        array     = [];              # in array[] stehen alle Messdaten seit CLEAR
-        ar_index  = 1;
-        length    = 3000;
-        t         = [];
-        dt        = 5;
-        t_sum     = 0;
-        plotwidth = 800;
-        plot      = 1;
-        plcolor   = "";
-        ylim      = 0;                 #yalternativ lim = [0 100];
+        array     = []; ar_index  = 1; length    = 3000;
+        t         = []; dt        = 5; t_sum     = 0;
+        plotwidth = 800; plot     = 1; plcolor   = "";
+        ylim      = 0;    #yalternativ lim = [0 100];
         filter    = 1;
-        HP_sp  = [0 0 0 0 0 0];    # Filter-Speicher
-        NO_sp  = [0 0 0 0 0 0];    # Filter-Speicher
-        TP_sp  = [0 0 0 0 0 0];    # Filter-Speicher
-        DQ_sp  = [0 0 0 0 0 0];    # Differenzenquotient
-        DQ2_sp = [0 0 0 0 0 0];    # Differenzenquotient
-        HP_ko  = [0 0 0 0 0];
-        NO_ko  = [0 0 0 0 0];
-        TP_ko  = [0 0 0 0 0];
-        DQ_ko  = [0 0 0 0 0];
-        DQ2_ko  = [0 0 0 0 0];
-        slopeDetector = 0;
-        lastSample    = 0;
-        lastSlope     = 1;
-        lastMaxTime   = 0;
-        peakDetector  = 0;
-        peakThreshold = 0;
-        peakTrigger   = 0;
-        lastPeakTime  = 0;
-        evalCounter   = 0;
-        evalWindow    = 200;
-        #EvalThresTime = 1;
-        #eval_tic      = 0;
-        BPM           = 0;
+        # Filter-Speicher
+        HP_sp  = [0 0 0 0 0 0]; NO_sp  = [0 0 0 0 0 0]; TP_sp  = [0 0 0 0 0 0];
+        DQ_sp  = [0 0 0 0 0 0]; DQ2_sp = [0 0 0 0 0 0];
+        # Filter-Koeffizienten
+        HP_ko  = [0 0 0 0 0]; NO_ko   = [0 0 0 0 0]; TP_ko  = [0 0 0 0 0];
+        DQ_ko  = [0 0 0 0 0]; DQ2_ko  = [0 0 0 0 0];
+
+        slopeDetector = 0; lastSample = 0; lastSlope = 1; lastMaxTime = 0;
+        peakDetector = 0; peakThreshold = 0; peakTrigger = 0; lastPeakTime  = 0;
+
+        evalCounter = 0; evalWindow = 200;
+        BPM = 0;
     endproperties
 
     methods (Access=public)
@@ -49,9 +32,6 @@ classdef dataStreamClass < handle
           self.plot      = plot;
           self.filter    = filter;
           self.initRingBuffer();
-##          if (self.peakDetector)
-##            self.eval_tic = tic();
-##          endif
         endfunction
 
         function initRingBuffer(self)
@@ -91,29 +71,18 @@ classdef dataStreamClass < handle
 
           # Peak-Detector
           if (self.peakDetector)
-
             self.evalCounter = self.evalCounter + 1;
             # regelmaessig neu Threshold bestimmen
-            #e_toc = toc(self.eval_tic);
             if (self.evalCounter > self.evalWindow)
-            #if (e_toc > self.EvalThresTime)
               self.evalThreshold;
-              #self.eval_tic = tic();
             endif
-
             self.peakDetectorFunction(sample);
-
           endif
-
           # Slope-Detector
           if (self.slopeDetector)
-
             self.slopeDetectorFunction(sample);
-
           endif
-
           self.lastSample = sample;
-
         endfunction
 
         function [ret_array, ret_time] = lastSamples(self,n)
@@ -136,19 +105,19 @@ classdef dataStreamClass < handle
           #  ist: NO > TP > HP
           #  war: HP > NO > TP
           if (NO_filtered)
-            [sample,self.NO_sp] = digitalerFilter(sample,self.NO_sp,self.NO_ko);
+            [sample,self.NO_sp] = biquadFilter(sample,self.NO_sp,self.NO_ko);
            endif
            if (TP_filtered)
-             [sample,self.TP_sp] = digitalerFilter(sample,self.TP_sp,self.TP_ko);
+             [sample,self.TP_sp] = biquadFilter(sample,self.TP_sp,self.TP_ko);
            endif
            if (HP_filtered)
-             [sample,self.HP_sp] = digitalerFilter(sample,self.HP_sp,self.HP_ko);
+             [sample,self.HP_sp] = biquadFilter(sample,self.HP_sp,self.HP_ko);
            endif
            if (DQ_filtered)
-             [sample,self.DQ_sp] = digitalerFilter(sample,self.DQ_sp,self.DQ_ko);
+             [sample,self.DQ_sp] = biquadFilter(sample,self.DQ_sp,self.DQ_ko);
            endif
            if (DQ2_filtered)
-             [sample,self.DQ2_sp] = digitalerFilter(sample,self.DQ2_sp,self.DQ2_ko);
+             [sample,self.DQ2_sp] = biquadFilter(sample,self.DQ2_sp,self.DQ2_ko);
            endif
         endfunction
 
@@ -171,7 +140,6 @@ classdef dataStreamClass < handle
              self.peakThreshold = 0.5*max(evalArray);
           endif
           self.evalCounter = 0;
-          #disp("evalThreshold");
         endfunction
 
         function peakDetectorFunction(self,sample)

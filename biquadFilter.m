@@ -1,5 +1,5 @@
 # Filterimplementierung
-function [adc,sp] = digitalerFilter(adc,sp,ko);
+function [adc,sp] = biquadFilter(adc,sp,ko);
 
      sp(3) = sp(2); sp(2) = sp(1); sp(1) = adc; sp(6) = sp(5) ; sp(5) = sp(4);
 

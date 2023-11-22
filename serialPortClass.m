@@ -130,5 +130,25 @@ classdef serialPortClass < handle
       endfor
     endfunction
 
+    function createRegEx(self,dataStream)
+      self.regex_pattern = '(';
+      for i = 1:length(dataStream)
+        self.regex_pattern = [self.regex_pattern dataStream(i).name];
+        if i < length(dataStream)
+          self.regex_pattern = [self.regex_pattern '|'];
+        endif
+      endfor
+      self.regex_pattern = [self.regex_pattern '):(-?\d+),t:(\d+)'];
+    endfunction
+
+    function createSelector(self,dataStream)
+      # Liste aller dataStream Namen erstellen fuer Dictonary
+      namelist = {};
+      for i = 1:length(dataStream)
+        namelist{end+1} = dataStream(i).name;
+      endfor
+      values = 1:numel(dataStream);
+      self.streamSelector = containers.Map(namelist,values);
+    endfunction
   endmethods
 end
