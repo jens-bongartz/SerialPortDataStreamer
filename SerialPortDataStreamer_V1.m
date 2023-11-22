@@ -134,5 +134,6 @@ if !isempty(inputPort.serialPortPath)
     endif # b_toc
   until(quit_prg);    %% Programmende mit Quit-Button
   clear inputPort.serial_01;
-  clear all;
 endif
+clear all;
+

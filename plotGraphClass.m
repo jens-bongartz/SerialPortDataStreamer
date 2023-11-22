@@ -10,8 +10,8 @@ classdef plotGraphClass < handle
     function self = plotGraphClass(dataStream)    # Constructor
       graphics_toolkit("qt");
       self.fi_1 = figure(1);
-      #set(self.fi_1,"position",[0,0,1000,1000]);
-      clf
+      pos = get(self.fi_1,"outerposition");
+      set(self.fi_1,"outerposition", [pos(1),pos(2),1000,1000]);
       spN = 0;
       for i = 1:length(dataStream);
         if (dataStream(i).plot == 1)
@@ -33,6 +33,10 @@ classdef plotGraphClass < handle
           self.subLi(j) = line("linewidth",2,"color",dataStream(i).plcolor);
         endif
       endfor
+      pos = get(self.fi_1,"position");
+      set(self.fi_1,"position", [pos(1)+1,pos(2)+1,1000,1000]);
+      shg();
+      refresh(self.fi_1);
     endfunction
 
     function draw(self,dataStream)
