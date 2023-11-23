@@ -28,8 +28,8 @@ global quit_prg = 0 clear_data = 0 save_data = 0 rec_data = 1;
 
 # Einstellwerte fuer die Programm-Performance [Sekunden]
 Bench_Time      = 2;
-Plot_Time       = 0.1;
-SerialPort_Time = 0.1;
+Plot_Time       = 0.1;          # Raspi: 0.025
+SerialPort_Time = 0.1;          # Raspi: 0.025
 Pause_Time      = 0.05;
 
 # Der weitere Teil wird nur ausgefuehrt, wenn serielle Schnittstelle gefunden wurde
