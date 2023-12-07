@@ -1,21 +1,17 @@
 #        SerialPortDataStreamer V 1.0  (SPDS)
 #  (c) Jens Bongartz, 2023, RheinAhrCampus Remagen
-#                Stand: 22.11.2023
+#                Stand: 07.12.2023
 #  ================================================
 pkg load instrument-control;
 clear all; clc;
 # obj = dataStreamClass(name,plcolor,dt,plotwidth,plot,filter)
 # createFilter(f_abtast,f_HP,f_NO,f_TP)
-dataStream(1) = dataStreamClass("EKG","red",5,800,1,1); # externe Klasse
-dataStream(1).createFilter(200,1,50,40);
-dataStream(1).peakDetector  = 1;
-dataStream(1).evalWindow    = 200;
-##dataStream(1) = dataStreamClass("SIM","red",5,800,1,1);
-##dataStream(1).createFilter(200,1,50,40);
-##dataStream(1).slopeDetector = 1;
-##dataStream(2) = dataStreamClass("SIG","blue",20,200,1,1);
-##dataStream(2).createFilter(50,1,10,20);
-##dataStream(2).slopeDetector = 1;
+dataStream(1) = dataStreamClass("rot","red",80,200,1,1); # externe Klasse
+dataStream(1).createFilter(20,0.1,5,8);
+#dataStream(1).peakDetector  = 1;
+#dataStream(1).evalWindow    = 200;
+dataStream(2) = dataStreamClass("ir","blue",80,200,1,1); # externe Klasse
+dataStream(2).createFilter(20,0.1,5,8);
 
 baudrate = 115200;
 inputPort = serialPortClass(baudrate);        # externe Klasse
@@ -23,7 +19,7 @@ inputPort.createSelector(dataStream);         # >> inputPort.streamSelector
 inputPort.createRegEx(dataStream);            # >> inputPort.regex_pattern
 
 # Globale Variablen zur Programmsteuerung
-global HP_filtered = 1 NO_filtered = 1 TP_filtered = 1 DQ_filtered = 0 DQ2_filtered = 0;
+global HP_filtered = 0 NO_filtered = 1 TP_filtered = 1 DQ_filtered = 0 DQ2_filtered = 0;
 global quit_prg = 0 clear_data = 0 save_data = 0 rec_data = 1;
 
 # Einstellwerte fuer die Programm-Performance [Sekunden]

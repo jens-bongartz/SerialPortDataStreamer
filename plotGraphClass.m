@@ -45,24 +45,24 @@ classdef plotGraphClass < handle
         # wenn plot == 1 dann wird das array des dataStream geplottet >> adc_plot
         if (dataStream(i).plot == 1)
           j=j+1;
-##        if (length(dataStream(i).array) > dataStream(i).plotwidth) # Fenster scrollt
-          [adc_plot, data_t] = dataStream(i).lastSamples(dataStream(i).plotwidth);
-           x_axis = [data_t(1) data_t(end)];
-##         else                                                       # Fenster scrollt nicht
-##         [adc_plot, data_t] = dataStream(i).lastSamples(dataStream(i).ar_index-1);
-##         x_axis = [0 dataStream(i).plotwidth*dataStream(i).dt];
-##         endif
+          if (dataStream(i).index > dataStream(i).plotwidth) # Fenster scrollt
+             [adc_plot, data_t] = dataStream(i).lastSamples(dataStream(i).plotwidth);
+             x_axis = [data_t(1) data_t(end)];
+          else
+             [adc_plot, data_t] = dataStream(i).lastSamples(dataStream(i).ar_index-1);
+             x_axis = [0 dataStream(i).plotwidth*dataStream(i).dt];
+          endif
 
-           if (ishandle(self.fi_1))
-             set(self.subPl(j),"xlim",x_axis);
-             set(self.subLi(j),"xdata",data_t,"ydata",adc_plot);
-             if (dataStream(i).slopeDetector || dataStream(i).peakDetector)
-               titleText = strcat("BPM:",num2str(dataStream(i).BPM));
-               set(self.subPl(j),"title",titleText,"fontsize",20);
-             endif
-           endif
-         endif # (dataStream(i).plot==1)
-       endfor
+          if (ishandle(self.fi_1))
+            set(self.subPl(j),"xlim",x_axis);
+            set(self.subLi(j),"xdata",data_t,"ydata",adc_plot);
+            if (dataStream(i).slopeDetector || dataStream(i).peakDetector)
+              titleText = strcat("BPM:",num2str(dataStream(i).BPM));
+              set(self.subPl(j),"title",titleText,"fontsize",20);
+            endif
+          endif
+        endif # (dataStream(i).plot==1)
+      endfor
     endfunction
 
   endmethods

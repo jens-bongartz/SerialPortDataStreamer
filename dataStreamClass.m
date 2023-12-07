@@ -1,9 +1,11 @@
-% dataStreamClass.m >> This is a handle-Class!
+# dataStreamClass.m >> This is a handle-Class!
 classdef dataStreamClass < handle
 
     properties
+        # ar_index >> Counter fuer Ringspeicher
+        # index    >> Counter fuer alle Abtastwerte des dataStream
         name      = "";
-        array     = []; ar_index  = 1; length    = 3000;
+        array     = []; ar_index  = 1; length    = 600; index = 1;
         t         = []; dt        = 5; t_sum     = 0;
         plotwidth = 800; plot     = 1; plcolor   = "";
         ylim      = 0;    #yalternativ lim = [0 100];
@@ -37,7 +39,7 @@ classdef dataStreamClass < handle
         function initRingBuffer(self)
           self.array    = zeros(1,self.length);
           self.t        = zeros(1,self.length);
-          self.ar_index = self.plotwidth;
+          self.ar_index = 1;
         endfunction
 
         function createFilter(self,f_abtast,f_HP,f_NO,f_TP)
@@ -57,12 +59,13 @@ classdef dataStreamClass < handle
           if (abs(sample) < 0.0001)        # 'dataaspectratio' Error verhindern
             sample = 0;
           endif
-
+          #disp(self.ar_index);
+          #disp(sample);
           self.array(self.ar_index)=sample;
-
           self.t_sum = self.t_sum + sample_t;
           self.t(self.ar_index) = self.t_sum;
 
+          self.index = self.index + 1;
           # Ringspeicher Indexing
           self.ar_index = self.ar_index + 1;
           if (self.ar_index > self.length)
@@ -158,6 +161,7 @@ classdef dataStreamClass < handle
         endfunction
 
         function clear(self)
+          self.index        = 1;
           self.ar_index     = 1;
           self.t_sum        = 0;
           self.lastMaxTime  = 0;
