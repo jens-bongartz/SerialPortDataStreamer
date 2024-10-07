@@ -5,7 +5,7 @@ classdef dataStreamClass < handle
         # ar_index >> Counter fuer Ringspeicher
         # index    >> Counter fuer alle Abtastwerte des dataStream
         name      = "";
-        array     = []; ar_index  = 1; length    = 600; index = 1;
+        array     = []; ar_index  = 1; length    = 6000; index = 1;
         t         = []; dt        = 5; t_sum     = 0;
         plotwidth = 800; plot     = 1; plcolor   = "";
         ylim      = 0;    #yalternativ lim = [0 100];
