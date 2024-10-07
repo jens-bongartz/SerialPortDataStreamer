@@ -6,12 +6,12 @@ pkg load instrument-control;
 clear all; clc;
 # obj = dataStreamClass(name,plcolor,dt,plotwidth,plot,filter)
 # createFilter(f_abtast,f_HP,f_NO,f_TP)
-dataStream(1) = dataStreamClass("rot","red",80,200,1,1); # externe Klasse
-dataStream(1).createFilter(20,0.1,5,8);
+dataStream(1) = dataStreamClass("EKG","red",5,800,1,1); # externe Klasse
+dataStream(1).createFilter(200,1,50,40);
 #dataStream(1).peakDetector  = 1;
 #dataStream(1).evalWindow    = 200;
-dataStream(2) = dataStreamClass("ir","blue",80,200,1,1); # externe Klasse
-dataStream(2).createFilter(20,0.1,5,8);
+dataStream(2) = dataStreamClass("t","blue",5,800,1,1); # externe Klasse
+dataStream(2).createFilter(200,1,50,40);
 
 baudrate = 115200;
 inputPort = serialPortClass(baudrate);        # externe Klasse
